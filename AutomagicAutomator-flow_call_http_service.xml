@@ -1,0 +1,66 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
+<data version="1.37.0">
+  <trigger type="nfc_tag">
+    <useDefaultName>true</useDefaultName>
+    <name>NFC Tag: 245678533589324</name>
+    <enabled>true</enabled>
+    <automagicTagID>true</automagicTagID>
+    <tagID>245678533589324</tagID>
+    <existingTagID>1233378948172417</existingTagID>
+  </trigger>
+  <action type="http_request">
+    <useDefaultName>true</useDefaultName>
+    <name>HTTP Request: POST {global_ha_addr}/api/services/{Service1}  text/plain {JsonData} store in response</name>
+    <url>{global_ha_addr}/api/services/{Service1} </url>
+    <verifyCertificates>false</verifyCertificates>
+    <basicAuthentication>false</basicAuthentication>
+    <username></username>
+    <clientCert>false</clientCert>
+    <clientCertPath></clientCertPath>
+    <httpMethod>POST</httpMethod>
+    <networkType>DEFAULT</networkType>
+    <httpContentType>GENERAL_TEXT</httpContentType>
+    <contentType>text/plain</contentType>
+    <generalTextData>{JsonData}</generalTextData>
+    <formFieldList>{"entity_id": "light.rgbw_1"}</formFieldList>
+    <uploadFieldName>upload_field</uploadFieldName>
+    <uploadFilePath></uploadFilePath>
+    <timeout>60000</timeout>
+    <setCustomHTTPHeaders>true</setCustomHTTPHeaders>
+    <customHTTPHeaders>{global_ha_k}</customHTTPHeaders>
+    <storeInVariable>true</storeInVariable>
+    <variable>response</variable>
+    <path>/storage/emulated/0/Download/file.bin</path>
+    <followRedirects>true</followRedirects>
+  </action>
+  <action type="script">
+    <useDefaultName>true</useDefaultName>
+    <name>Script: Service1= replace( {Service}, "." , "/" ); data = newMapFromValues ("entity_id", {Entity_id}); JsonData = toJSON (data);</name>
+    <script>Service1= replace( {Service}, "." , "/" );
+data = newMapFromValues ("entity_id", {Entity_id});
+JsonData = toJSON (data);</script>
+  </action>
+  <action type="script">
+    <useDefaultName>true</useDefaultName>
+    <name>Script: Service= "light.toggle"; Entity_id= "light.rgbw_1";</name>
+    <script>Service= "light.toggle";
+ 
+Entity_id= "light.rgbw_1";
+</script>
+  </action>
+  <flow type="flow">
+    <name>Test http service</name>
+    <group>Home assistant </group>
+    <enabled>true</enabled>
+    <executionPolicy>PARALLEL</executionPolicy>
+    <triggercontainer id="t1" x="69.99998" y="227.49991">
+      <trigger>NFC Tag: 245678533589324</trigger>
+    </triggercontainer>
+    <actioncontainer id="t2" x="69.99999" y="402.5">Script: Service= "light.toggle"; Entity_id= "light.rgbw_1";</actioncontainer>
+    <actioncontainer id="t3" x="70.000015" y="577.5">Script: Service1= replace( {Service}, "." , "/" ); data = newMapFromValues ("entity_id", {Entity_id}); JsonData = toJSON (data);</actioncontainer>
+    <actioncontainer id="t4" x="69.99999" y="752.5">HTTP Request: POST {global_ha_addr}/api/services/{Service1}  text/plain {JsonData} store in response</actioncontainer>
+    <connection from="t1" to="t2" type="NORMAL" sourcePosition="SOUTH" targetPosition="NORTH" />
+    <connection from="t2" to="t3" type="NORMAL" sourcePosition="SOUTH" targetPosition="NORTH" />
+    <connection from="t3" to="t4" type="NORMAL" sourcePosition="SOUTH" targetPosition="NORTH" />
+  </flow>
+</data>
